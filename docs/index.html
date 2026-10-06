@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight Delay Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="logo">✈️ Flight<span>Predict</span></div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="predict.html">Smart Prediction</a>
+    <a href="weather.html">Weather Analysis</a>
+    <a href="risk.html">Risk Analysis</a>
+  </div>
+  <div class="status"><span class="status-dot"></span> Prediction System Online</div>
+</nav>
+
+<section class="hero">
+  <h1>Flight Delay <span>Predictor</span></h1>
+  <p>Predict potential flight delays using weather, traffic and operational factors.</p>
+</section>
+
+<main class="container">
+  <div class="dashboard">
+    <div class="card">
+      <div class="card-title"><div class="icon">✈️</div><h2>Flight Information</h2></div>
+
+      <form id="flightForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="airline">Airline</label>
+            <select id="airline" required>
+              <option value="">Select Airline</option>
+              <option>IndiGo</option><option>Air India</option><option>Vistara</option>
+              <option>SpiceJet</option><option>Go First</option><option>Emirates</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="flightNumber">Flight Number</label>
+            <input type="text" id="flightNumber" placeholder="e.g. 6E203" required>
+          </div>
+
+          <div class="field">
+            <label for="origin">Origin Airport</label>
+            <input type="text" id="origin" placeholder="e.g. BLR" maxlength="4" required>
+          </div>
+
+          <div class="field">
+            <label for="destination">Destination Airport</label>
+            <input type="text" id="destination" placeholder="e.g. DEL" maxlength="4" required>
+          </div>
+
+          <div class="field">
+            <label for="date">Flight Date</label>
+            <input type="date" id="date" required>
+          </div>
+
+          <div class="field">
+            <label for="time">Departure Time</label>
+            <input type="time" id="time" required>
+          </div>
+
+          <div class="field">
+            <label for="weather">Weather Condition</label>
+            <select id="weather" required>
+              <option value="">Select Weather</option>
+              <option value="clear">Clear</option><option value="cloudy">Cloudy</option>
+              <option value="rain">Rain</option><option value="storm">Storm</option><option value="fog">Fog</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="wind">Wind Speed (km/h)</label>
+            <input type="number" id="wind" placeholder="e.g. 25" min="0" max="300" required>
+          </div>
+
+          <div class="field">
+            <label for="previousDelay">Previous Flight Delay</label>
+            <select id="previousDelay" required>
+              <option value="0">No Delay</option><option value="1">Minor Delay</option><option value="2">Major Delay</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="traffic">Airport Traffic</label>
+            <select id="traffic" required>
+              <option value="">Select Traffic</option><option value="low">Low</option>
+              <option value="medium">Medium</option><option value="high">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button type="submit" class="predict-btn">Predict Delay</button>
+          <button type="button" class="reset-btn" id="resetBtn">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card result-card">
+      <div class="empty-result" id="emptyResult">
+        <div class="plane-icon">✈️</div>
+        <h3>Ready to Predict</h3>
+        <p>Enter your flight information and click "Predict Delay" to see the prediction.</p>
+      </div>
+
+      <div class="result" id="result">
+        <div class="prediction-box">
+          <div class="prediction-label">Estimated Delay</div>
+          <div class="prediction-value" id="delayMinutes">0</div>
+          <div class="minutes">minutes</div>
+        </div>
+
+        <div class="risk"><span class="risk-badge" id="riskBadge">LOW RISK</span></div>
+
+        <div class="probability">
+          <div class="prob-header"><span>Delay Probability</span><strong id="probabilityText">0%</strong></div>
+          <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+
+        <div class="summary">
+          <h3>Flight Summary</h3>
+          <div class="summary-grid">
+            <div class="summary-item"><small>Airline</small><strong id="summaryAirline">—</strong></div>
+            <div class="summary-item"><small>Flight</small><strong id="summaryFlight">—</strong></div>
+            <div class="summary-item"><small>Route</small><strong id="summaryRoute">—</strong></div>
+            <div class="summary-item"><small>Weather</small><strong id="summaryWeather">—</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="features">
+    <a href="predict.html" class="feature-link">
+      <div class="feature"><div class="feature-icon">🤖</div><h3>Smart Prediction</h3><p>Analyze multiple flight factors to estimate possible delays.</p></div>
+    </a>
+    <a href="weather.html" class="feature-link">
+      <div class="feature"><div class="feature-icon">🌦️</div><h3>Weather Analysis</h3><p>Weather conditions such as rain, fog and storms are considered.</p></div>
+    </a>
+    <a href="risk.html" class="feature-link">
+      <div class="feature"><div class="feature-icon">📊</div><h3>Risk Analysis</h3><p>Get a clear low, medium or high delay risk classification.</p></div>
+    </a>
+  </section>
+</main>
+
+<footer>FlightPredict © 2026 | Flight Delay Prediction System</footer>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight Delay Prediction Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="logo">✈️ Flight<span>Predict</span></div>
+  <div class="nav-links">
+    <a href="index.html">Dashboard</a>
+    <a href="predict.html">Smart Prediction</a>
+    <a href="weather.html">Weather Analysis</a>
+    <a href="risk.html">Risk Analysis</a>
+  </div>
+  <div class="status"><span class="status-dot"></span> Prediction Report</div>
+</nav>
+
+<section class="hero">
+  <h1>Flight Delay <span>Prediction Report</span></h1>
+  <p>Detailed analysis of your flight delay prediction.</p>
+</section>
+
+<main class="container">
+  <div class="card report-card">
+    <div class="card-title"><div class="icon">📊</div><h2>Prediction Summary</h2></div>
+
+    <div class="prediction-box">
+      <div class="prediction-label">Estimated Flight Delay</div>
+      <div class="prediction-value" id="reportDelay">0</div>
+      <div class="minutes">minutes</div>
+    </div>
+
+    <div class="risk"><span class="risk-badge" id="reportRisk">LOW RISK</span></div>
+
+    <div class="probability">
+      <div class="prob-header"><span>Delay Probability</span><strong id="reportProbability">0%</strong></div>
+      <div class="progress"><div class="progress-bar" id="reportProgress"></div></div>
+    </div>
+
+    <div class="summary">
+      <h3>Flight Details</h3>
+      <div class="summary-grid">
+        <div class="summary-item"><small>Airline</small><strong id="reportAirline">—</strong></div>
+        <div class="summary-item"><small>Flight Number</small><strong id="reportFlight">—</strong></div>
+        <div class="summary-item"><small>Origin</small><strong id="reportOrigin">—</strong></div>
+        <div class="summary-item"><small>Destination</small><strong id="reportDestination">—</strong></div>
+        <div class="summary-item"><small>Departure Date</small><strong id="reportDate">—</strong></div>
+        <div class="summary-item"><small>Departure Time</small><strong id="reportTime">—</strong></div>
+        <div class="summary-item"><small>Weather</small><strong id="reportWeather">—</strong></div>
+        <div class="summary-item"><small>Wind Speed</small><strong id="reportWind">—</strong></div>
+        <div class="summary-item"><small>Previous Flight Delay</small><strong id="reportPreviousDelay">—</strong></div>
+        <div class="summary-item"><small>Airport Traffic</small><strong id="reportTraffic">—</strong></div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h3>Prediction Analysis</h3>
+      <p id="reportAnalysis">Prediction analysis will appear here.</p>
+    </div>
+
+    <div class="buttons">
+      <button type="button" class="predict-btn" onclick="window.print()">🖨️ Print Report</button>
+      <button type="button" class="reset-btn" onclick="goBack()">← Back to Predictor</button>
+    </div>
+  </div>
+</main>
+
+<footer>Flight Delay Predictor • BCA Data Science Project</footer>
+
+<script>
+const data = JSON.parse(localStorage.getItem("flightPrediction"));
+
+if (!data) {
+  document.getElementById("reportAnalysis").textContent =
+    "No prediction data found. Please return to the predictor and generate a prediction.";
+} else {
+  document.getElementById("reportDelay").textContent = data.delay;
+  document.getElementById("reportProbability").textContent = data.probability + "%";
+  document.getElementById("reportProgress").style.width = data.probability + "%";
+
+  const riskBadge = document.getElementById("reportRisk");
+  riskBadge.textContent = data.risk;
+  riskBadge.className = "risk-badge " + data.riskClass;
+
+  document.getElementById("reportAirline").textContent = data.airline;
+  document.getElementById("reportFlight").textContent = data.flight;
+  document.getElementById("reportOrigin").textContent = data.origin;
+  document.getElementById("reportDestination").textContent = data.destination;
+  document.getElementById("reportDate").textContent = data.date;
+  document.getElementById("reportTime").textContent = data.time;
+  document.getElementById("reportWeather").textContent = data.weather;
+  document.getElementById("reportWind").textContent = data.wind + " km/h";
+  document.getElementById("reportPreviousDelay").textContent = data.previousDelay;
+  document.getElementById("reportTraffic").textContent = data.traffic;
+
+  let analysis = "";
+  if (data.probability < 35) {
+    analysis = "The flight has a relatively low probability of experiencing a significant delay. Current weather, traffic and operational conditions indicate a lower delay risk.";
+  } else if (data.probability < 65) {
+    analysis = "The flight has a moderate probability of delay. Passengers should monitor flight updates and allow some additional travel time.";
+  } else {
+    analysis = "The flight has a high probability of delay. Weather, airport traffic or previous operational delays may significantly affect the scheduled departure.";
+  }
+  document.getElementById("reportAnalysis").textContent = analysis;
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+</script>
+</body>
+</html>
