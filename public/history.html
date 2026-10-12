@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction History - FlightPredict</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{text-align:left;padding:12px 10px;border-bottom:1px solid #1e293b;white-space:nowrap}
+    th{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+    td{color:#e2e8f0}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:25px}
+    @media(max-width:650px){.stats{grid-template-columns:1fr 1fr}}
+    .note{color:#94a3b8;font-size:13px;padding:20px 0;text-align:center}
+  </style>
+</head>
+<body>
+<nav>
+  <div class="logo">✈️ Flight<span>Predict</span></div>
+  <div class="nav-links">
+    <a href="index.html">Dashboard</a>
+    <a href="predict.html">Smart Prediction</a>
+    <a href="weather.html">Weather Analysis</a>
+    <a href="risk.html">Risk Analysis</a>
+    <a href="history.html" class="active">History</a>
+  </div>
+  <div class="status"><span class="status-dot"></span> Database Connected</div>
+</nav>
+
+<section class="hero">
+  <h1>Prediction <span>History</span></h1>
+  <p>Every prediction made through the system, stored in the database.</p>
+</section>
+
+<main class="container">
+  <div class="card report-card">
+    <div class="stats">
+      <div class="summary-item"><small>Total Predictions</small><strong id="sTotal">—</strong></div>
+      <div class="summary-item"><small>Avg Delay (min)</small><strong id="sDelay">—</strong></div>
+      <div class="summary-item"><small>Avg Probability</small><strong id="sProb">—</strong></div>
+      <div class="summary-item"><small>High Risk</small><strong id="sHigh">—</strong></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Flight</th><th>Route</th><th>Date</th><th>Weather</th><th>Traffic</th><th>Delay</th><th>Probability</th><th>Risk</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="note" id="note">Loading…</div>
+    </div>
+  </div>
+</main>
+<footer>FlightPredict © 2026 | Prediction History</footer>
+
+<script>
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function load(){
+  const note=document.getElementById('note');
+  try{
+    const [h,s]=await Promise.all([fetch('/api/predictions').then(r=>r.json()),fetch('/api/stats').then(r=>r.json())]);
+    if(!h.dbEnabled){note.textContent='Database is not configured. Set DATABASE_URL to enable history.';return;}
+    document.getElementById('sTotal').textContent=s.total;
+    document.getElementById('sDelay').textContent=s.avgDelay;
+    document.getElementById('sProb').textContent=s.avgProbability+'%';
+    document.getElementById('sHigh').textContent=s.high;
+    if(!h.predictions.length){note.textContent='No predictions yet. Run one from the dashboard.';return;}
+    note.remove();
+    document.getElementById('rows').innerHTML=h.predictions.map(p=>`
+      <tr>
+        <td>${esc(p.airline)} ${esc(p.flight)}</td>
+        <td>${esc(p.origin)} → ${esc(p.destination)}</td>
+        <td>${esc(p.flight_date)} ${esc(p.flight_time)}</td>
+        <td>${esc(p.weather)}</td>
+        <td>${esc(p.traffic)}</td>
+        <td>${esc(p.delay)} min</td>
+        <td>${esc(p.probability)}%</td>
+        <td><span class="risk-badge ${esc(p.risk_class)}">${esc(p.risk)}</span></td>
+      </tr>`).join('');
+  }catch(e){note.textContent='Could not load history: '+e.message;}
+}
+load();
+</script>
+</body>
+</html>
