@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="FlightPredict logo">
+  <defs>
+    <linearGradient id="fp-bg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="url(#fp-bg)"/>
+  <!-- forecast ring: dashed = still to come -->
+  <circle cx="24" cy="24" r="16" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="1.6" stroke-dasharray="2.4 3.2" stroke-linecap="round"/>
+  <!-- delay marker -->
+  <circle cx="12.7" cy="35.3" r="3" fill="#facc15"/>
+  <!-- aircraft climbing up-right -->
+  <g transform="translate(24 24) rotate(45) scale(.95) translate(-12 -12)">
+    <path fill="#fff" d="M12 2c.8 0 1.5.8 1.5 2v5L21 13.5v2l-7.5-2V18l2.5 1.8v1.7L12 20.5l-4 1v-1.7l2.5-1.8v-4.5l-7.5 2v-2L10.5 9V4c0-1.2.7-2 1.5-2z"/>
+  </g>
+</svg>

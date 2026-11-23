@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - FlightPredict</title>
+<meta name="description" content="FlightPredict: know before you go. Flight delay predictions from weather, airport traffic, wind and previous delays.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html" aria-label="FlightPredict home">
+    <img src="logo.svg" alt="" width="40" height="40">
+    <span class="logo-text">Flight<em>Predict</em><small>Know before you go.</small></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="new-prediction.html">New Prediction</a>
+    <a href="predict.html">Smart Prediction</a>
+    <a href="weather.html">Weather Analysis</a>
+    <a href="risk.html">Risk Analysis</a>
+    <a href="history.html">History</a>
+  </div>
+  <div class="status"><span class="status-dot" id="navDot"></span> <span id="navStatus">Checking system…</span></div>
+</nav>
+
+<main class="container">
+  <section class="dash-hero">
+    <div>
+      <h1>Know before you go.</h1>
+      <p>FlightPredict scores every flight on weather, airport traffic, wind and the previous leg's delay, then tells you how late it is likely to be.</p>
+    </div>
+    <div class="dash-cta">
+      <a class="btn-link btn-primary" href="new-prediction.html">Predict a flight</a>
+      <a class="btn-link btn-ghost" href="history.html">View history</a>
+    </div>
+  </section>
+
+  <div class="dash-chips" id="chips" aria-live="polite"></div>
+
+  <section class="kpis" aria-label="Summary">
+    <div class="card kpi"><small>Predictions made</small><strong id="kTotal">–</strong><span id="kTotalSub">&nbsp;</span></div>
+    <div class="card kpi delay"><small>Average delay</small><strong id="kDelay">–</strong><span>minutes per flight</span></div>
+    <div class="card kpi prob"><small>Average delay chance</small><strong id="kProb">–</strong><span>across all predictions</span></div>
+    <div class="card kpi high"><small>High-risk flights</small><strong id="kHigh">–</strong><span id="kHighSub">&nbsp;</span></div>
+  </section>
+
+  <section class="dash-grid">
+    <div class="card dash-card">
+      <h2>Risk mix</h2>
+      <p class="sub">How your predictions split across the three risk levels.</p>
+      <div id="riskMix"></div>
+    </div>
+    <div class="card dash-card">
+      <h2>Delay chance over time</h2>
+      <p class="sub" id="trendSub">Your most recent predictions, oldest to newest.</p>
+      <div id="trend"></div>
+    </div>
+  </section>
+
+  <section class="dash-grid wide">
+    <div class="card dash-card">
+      <div class="latest-top">
+        <div><h2>Recent predictions</h2><p class="sub" style="margin-bottom:0">The latest flights checked.</p></div>
+        <a class="btn-link btn-ghost" style="padding:9px 16px;font-size:13px" href="history.html">See all</a>
+      </div>
+      <div class="table-wrap" id="recent"></div>
+    </div>
+    <div class="card dash-card" id="latestCard">
+      <h2>Latest prediction</h2>
+      <p class="sub">The last flight you checked in this browser.</p>
+      <div id="latest"></div>
+    </div>
+  </section>
+
+  <section class="dash-grid">
+    <div class="card dash-card">
+      <h2>What drives the score</h2>
+      <p class="sub">Delay chance = weather + traffic + wind + previous delay, capped at 98%.</p>
+      <div class="weights" id="weights"></div>
+      <div class="bands">
+        <div class="band"><span class="risk-badge low">LOW RISK</span><p>Under 35%</p></div>
+        <div class="band"><span class="risk-badge medium">MEDIUM RISK</span><p>35% to 64%</p></div>
+        <div class="band"><span class="risk-badge high">HIGH RISK</span><p>65% and above</p></div>
+      </div>
+    </div>
+    <div class="card dash-card">
+      <h2>Patterns in your predictions</h2>
+      <p class="sub" id="patternSub">What shows up most in the flights you have checked.</p>
+      <div class="summary-grid" style="grid-template-columns:1fr" id="patterns"></div>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <h2>Everything in FlightPredict</h2>
+    <p>Open any tool from here.</p>
+  </div>
+  <section class="feature-grid">
+    <div class="feature">
+      <div class="feature-icon">✈️</div>
+      <h3><a href="new-prediction.html">New Prediction</a></h3>
+      <p>Enter a flight and get its estimated delay, delay chance and risk level in seconds.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🤖</div>
+      <h3><a href="predict.html">Smart Prediction</a></h3>
+      <p>See how the scoring model weighs weather, airport traffic, wind and the previous flight's delay.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌦️</div>
+      <h3><a href="weather.html">Weather Analysis</a></h3>
+      <p>Learn how storms, fog, wind and rain change a flight's schedule.</p>
+      <div class="sublinks">
+        <a href="storms-and-fog.html">Storms &amp; fog</a>
+        <a href="wind-velocity.html">Wind velocity</a>
+        <a href="precipitation.html">Precipitation</a>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3><a href="risk.html">Risk Analysis</a></h3>
+      <p>See what low, medium and high risk mean, and where each level starts.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🗂️</div>
+      <h3><a href="history.html">Prediction History</a></h3>
+      <p>Browse every saved prediction, with totals and averages.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🖨️</div>
+      <h3><a href="report.html">Prediction Report</a></h3>
+      <p>Open a printable summary of your latest prediction.</p>
+    </div>
+  </section>
+</main>
+
+<footer>FlightPredict © 2026 | Know before you go.</footer>
+<script src="dashboard.js"></script>
+</body>
+</html>
