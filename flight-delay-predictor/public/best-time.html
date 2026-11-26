@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="FlightPredict: know before you go. Estimate flight delay risk from weather, traffic, wind and inbound delays.">
+<title>Best time to fly · FlightPredict</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="theme-init.js"></script>
+</head>
+<body data-page="best-time">
+<main id="main" class="page">
+<div class="page-head"><h1>Best time to fly</h1><p>Keep the conditions the same and see how the delay chance changes across the day. Busy morning and evening hours score higher.</p></div>
+<div class="grid cols-form">
+  <section class="card" aria-labelledby="bh">
+    <div class="card-head"><div><h2 id="bh">Conditions</h2><p>Use the weather and traffic you expect.</p></div></div>
+    <form id="btForm">
+      <div class="form-grid">
+        <div class="field"><label for="weather">Weather</label><select id="weather" required><option value="clear">Clear</option><option value="cloudy">Cloudy</option><option value="rain">Rain</option><option value="storm">Storm</option><option value="fog">Fog</option></select></div>
+        <div class="field"><label for="wind">Wind speed <span class="hint">(km/h)</span></label><input id="wind" type="number" inputmode="numeric" min="0" max="300" value="15" required></div>
+        <div class="field"><label for="previousDelay">Previous flight delay</label><select id="previousDelay"><option value="0">No delay</option><option value="1">Minor delay</option><option value="2">Major delay</option></select></div>
+        <div class="field"><label for="traffic">Airport traffic</label><select id="traffic" required><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" type="submit">Find best time</button></div>
+    </form>
+  </section>
+  <section class="card" aria-labelledby="rh" aria-live="polite">
+    <div class="card-head"><h2 id="rh">Recommendation</h2></div>
+    <div id="btEmpty" class="empty"><h3>No result yet</h3><p>Choose your conditions and select Find best time.</p></div>
+    <div id="btSummary" hidden></div>
+  </section>
+</div>
+<section class="card" id="btChartCard" hidden style="margin-top:20px" aria-labelledby="ch">
+  <div class="card-head"><div><h2 id="ch">Delay chance by departure hour</h2><p>Lower bars are better. The scale is zoomed to the range of results.</p></div></div>
+  <div id="btChart"></div>
+  <div class="legend"><span><i class="low"></i>Low risk</span><span><i class="medium"></i>Medium risk</span><span><i class="high"></i>High risk</span></div>
+</section>
+
+</main>
+<noscript><p style="padding:16px">FlightPredict needs JavaScript for navigation and charts.</p></noscript>
+<script src="shell.js"></script>
+<script src="charts.js"></script>
+<script src="best-time.js"></script>
+</body>
+</html>

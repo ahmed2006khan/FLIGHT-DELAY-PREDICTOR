@@ -1,62 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Precipitation - FlightPredict</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="FlightPredict: know before you go. Estimate flight delay risk from weather, traffic, wind and inbound delays.">
+<title>Rain · FlightPredict</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="theme-init.js"></script>
 </head>
-<body>
-<nav>
-  <a class="logo" href="index.html" aria-label="FlightPredict home">
-    <img src="logo.svg" alt="" width="40" height="40">
-    <span class="logo-text">Flight<em>Predict</em><small>Know before you go.</small></span>
-  </a>
-  <div class="nav-links">
-      <a href="index.html">Dashboard</a>
-      <a href="new-prediction.html">New Prediction</a>
-      <a href="predict.html">Smart Prediction</a>
-      <a href="weather.html" class="active">Weather Analysis</a>
-      <a href="risk.html">Risk Analysis</a>
-      <a href="history.html">History</a>
-  </div>
-  <div class="status"><span class="status-dot"></span> Weather API Active</div>
-</nav>
-
-<section class="hero">
-  <h1>Precipitation <span>Impact</span></h1>
-  <p>How rain, snow, and freezing precipitation affect flight schedules.</p>
+<body data-page="weather">
+<main id="main" class="page">
+<div class="page-head"><h1>Rain</h1><p>How rain and wet surfaces affect schedules.</p></div>
+<section class="card prose" aria-labelledby="x1">
+  <div class="card-head"><h2 id="x1"><span aria-hidden="true">🌧️</span> Key numbers</h2></div>
+  <div class="kv"><div><small>Rain adds</small><strong>20 points</strong></div><div><small>Braking</small><strong>Reduced friction</strong></div><div><small>Runway use</small><strong>Longer clearance time</strong></div><div><small>Freezing rain</small><strong>De-icing required</strong></div></div>
+  <h3>Rain and wet surfaces</h3><p><strong>Visibility.</strong> Heavy downpours make visual approaches harder, so aircraft rely on instrument landing systems.</p><p><strong>Braking and hydroplaning.</strong> Wet runways reduce tyre grip, so larger gaps are kept between landings and take-offs. That slows the number of flights the airport can handle.</p>
+  <div class="btn-row"><a class="btn btn-ghost" href="weather.html" style="flex:0 0 auto">← Back to weather impact</a><a class="btn btn-primary" href="predict.html" style="flex:0 0 auto">Predict a flight</a></div>
 </section>
-
-<main class="container">
-  <div class="card report-card">
-    <div class="card-title"><div class="icon">🌧️</div><h2>Precipitation Dynamics</h2></div>
-    
-    <div class="summary">
-      <div class="summary-grid">
-        <div class="summary-item"><small>Rain Impact</small><strong>+20% Base Weight</strong></div>
-        <div class="summary-item"><small>Braking Action</small><strong>Reduced Friction Coefficient</strong></div>
-        <div class="summary-item"><small>Runway Occupancy</small><strong>Extended Clearance Time</strong></div>
-        <div class="summary-item"><small>De-Icing Operations</small><strong>Required in Freezing Rain</strong></div>
-      </div>
-    </div>
-
-    <div class="summary" style="margin-top: 25px;">
-      <h3>Rain and Surface Moisture</h3>
-      <p><strong>Visibility Reduction:</strong> Heavy downpours impair visual reference during visual approach phases and force aircraft to rely strictly on instrument landing systems (ILS).</p>
-      <br>
-      <p><strong>Braking & Hydroplaning:</strong> Wet runways reduce tire traction, necessitating larger safety buffers between successive landings and takeoffs, which slows down the airport arrival/departure rate.</p>
-    </div>
-
-    <div class="buttons" style="margin-top: 25px;">
-      <a href="weather.html" class="predict-btn" style="text-align:center; text-decoration:none; display:inline-block; line-height:20px;">← Back to Weather Analysis</a>
-    </div>
-  </div>
 </main>
-<footer>FlightPredict © 2026 | Weather Analytics</footer>
+<noscript><p style="padding:16px">FlightPredict needs JavaScript for navigation and charts.</p></noscript>
+<script src="shell.js"></script>
+
 </body>
 </html>

@@ -1,60 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Prediction - FlightPredict</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="FlightPredict: know before you go. Estimate flight delay risk from weather, traffic, wind and inbound delays.">
+<title>Predict a flight · FlightPredict</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="theme-init.js"></script>
 </head>
-<body>
-<nav>
-  <a class="logo" href="index.html" aria-label="FlightPredict home">
-    <img src="logo.svg" alt="" width="40" height="40">
-    <span class="logo-text">Flight<em>Predict</em><small>Know before you go.</small></span>
-  </a>
-  <div class="nav-links">
-      <a href="index.html">Dashboard</a>
-      <a href="new-prediction.html">New Prediction</a>
-      <a href="predict.html" class="active">Smart Prediction</a>
-      <a href="weather.html">Weather Analysis</a>
-      <a href="risk.html">Risk Analysis</a>
-      <a href="history.html">History</a>
-  </div>
-  <div class="status"><span class="status-dot"></span> System Online</div>
-</nav>
-
-<section class="hero">
-  <h1>Smart <span>Prediction Engine</span></h1>
-  <p>Learn how our predictive scoring model evaluates flight parameters.</p>
-</section>
-
-<main class="container">
-  <div class="card report-card">
-    <div class="card-title"><div class="icon">🤖</div><h2>Algorithm Weight Breakdown</h2></div>
-    
-    <div class="summary">
-      <div class="summary-grid">
-        <div class="summary-item"><small>Weather Base Impact</small><strong>Up to 35% Weight</strong></div>
-        <div class="summary-item"><small>Airport Traffic Impact</small><strong>Up to 25% Weight</strong></div>
-        <div class="summary-item"><small>Wind Speed Thresholds</small><strong>Up to 18% Weight</strong></div>
-        <div class="summary-item"><small>Inbound Flight Delay</small><strong>Up to 20% Weight</strong></div>
+<body data-page="predict">
+<main id="main" class="page">
+<div class="page-head"><h1>Predict a flight</h1><p>Enter the flight and today’s conditions to see the delay risk, the expected delay and what is driving it.</p></div>
+<div id="alert" class="alert" role="status" hidden></div>
+<div class="grid cols-form">
+  <section class="card" aria-labelledby="fh">
+    <div class="card-head"><div><h2 id="fh">Flight details</h2><p>Airport codes autocomplete as you type.</p></div></div>
+    <div id="savedWrap" hidden style="margin-bottom:18px">
+      <div class="label" id="savedLabel" style="margin-bottom:8px">Saved routes</div>
+      <div class="chips" id="saved" role="group" aria-labelledby="savedLabel"></div>
+    </div>
+    <form id="flightForm">
+      <div id="fields"></div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="submitBtn">Predict delay</button>
+        <button type="button" class="btn btn-ghost" id="saveRoute">☆ Save route</button>
+        <button type="reset" class="btn btn-ghost" id="resetBtn">Reset</button>
       </div>
+    </form>
+  </section>
+  <section class="card" aria-labelledby="rh" aria-live="polite">
+    <div class="card-head"><div><h2 id="rh">Prediction</h2></div></div>
+    <div id="empty" class="empty">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 34 56 12 42 54 31 39Z" fill="var(--accent)" fill-opacity=".85"/><path d="M31 39 56 12" stroke="var(--surface-solid)" stroke-width="3" stroke-linecap="round"/></svg>
+      <h3>Ready when you are</h3>
+      <p>Fill in the flight details and choose Predict delay. Your result appears here.</p>
     </div>
+    <div id="result" hidden></div>
+  </section>
+</div>
 
-    <div class="summary" style="margin-top: 25px;">
-      <h3>How It Works</h3>
-      <p>Our machine-learning inspired scoring model aggregates weather indicators, airport traffic, and inbound flight delays to compute departure probabilities and estimated delay durations with high reliability.</p>
-    </div>
-
-    <div class="buttons" style="margin-top: 25px;">
-      <a href="new-prediction.html" class="predict-btn" style="text-align:center; text-decoration:none; display:inline-block; line-height:20px;">Run New Prediction</a>
-    </div>
-  </div>
 </main>
-<footer>FlightPredict © 2026 | Smart Delay Engine</footer>
+<noscript><p style="padding:16px">FlightPredict needs JavaScript for navigation and charts.</p></noscript>
+<script src="shell.js"></script>
+<script src="airports.js"></script>
+<script src="charts.js"></script>
+<script src="common.js"></script>
+<script src="predict.js"></script>
+<script src="live.js"></script>
 </body>
 </html>

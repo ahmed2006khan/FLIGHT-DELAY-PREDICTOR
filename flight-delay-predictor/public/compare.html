@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="FlightPredict: know before you go. Estimate flight delay risk from weather, traffic, wind and inbound delays.">
+<title>Compare flights · FlightPredict</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="theme-init.js"></script>
+</head>
+<body data-page="compare">
+<main id="main" class="page">
+<div class="page-head"><h1>Compare two flights</h1><p>Put two options side by side and see which one is the safer bet. Comparisons are not saved to your history.</p></div>
+<div id="alert" class="alert" role="status" hidden></div>
+<form id="compareForm">
+  <div class="grid cols-2">
+    <section class="card" aria-labelledby="ah"><div class="card-head"><h2 id="ah">Flight A</h2></div><div id="fieldsA"></div></section>
+    <section class="card" aria-labelledby="bh"><div class="card-head"><h2 id="bh">Flight B</h2><button type="button" class="btn btn-ghost btn-sm" id="copyAB">Copy A into B</button></div><div id="fieldsB"></div></section>
+  </div>
+  <div class="btn-row"><button type="submit" class="btn btn-primary" id="cmpBtn">Compare flights</button></div>
+</form>
+<div id="cmpOut" hidden style="margin-top:24px" aria-live="polite"></div>
+
+</main>
+<noscript><p style="padding:16px">FlightPredict needs JavaScript for navigation and charts.</p></noscript>
+<script src="shell.js"></script>
+<script src="airports.js"></script>
+<script src="charts.js"></script>
+<script src="common.js"></script>
+<script src="compare.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="FlightPredict: know before you go. Estimate flight delay risk from weather, traffic, wind and inbound delays.">
+<title>How it works · FlightPredict</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="theme-init.js"></script>
+</head>
+<body data-page="model">
+<main id="main" class="page">
+<div class="page-head"><h1>How the prediction works</h1><p>A transparent scoring model. Every factor adds points to a delay score, and the score becomes the delay chance.</p></div>
+<div class="grid cols-2" style="align-items:start">
+  <section class="card" aria-labelledby="w1">
+    <div class="card-head"><h2 id="w1">What adds to the score</h2></div>
+    <div class="kv">
+      <div><small>Weather</small><strong>Up to 35 points</strong></div>
+      <div><small>Airport traffic</small><strong>Up to 25 points</strong></div>
+      <div><small>Inbound flight delay</small><strong>Up to 20 points</strong></div>
+      <div><small>Wind speed</small><strong>Up to 18 points</strong></div>
+      <div><small>Time of day</small><strong>Up to 8 points</strong></div>
+      <div><small>Maximum chance shown</small><strong>98%</strong></div>
+    </div>
+    <div class="btn-row"><a class="btn btn-primary" href="predict.html">Run a prediction</a></div>
+  </section>
+  <section class="card prose" aria-labelledby="w2">
+    <div class="card-head"><h2 id="w2">Reading the result</h2></div>
+    <p><strong>Delay chance.</strong> The total score, kept between 2% and 98%. Below 35% is low risk, 35% to 65% is medium and above 65% is high.</p>
+    <p><strong>Expected delay.</strong> Derived from the chance, with extra minutes when the aircraft is already running late.</p>
+    <p><strong>Score stability.</strong> How far the score sits from the nearest risk boundary. A score close to 35% or 65% could easily fall into the next risk level, so stability is lower there. It is not a statistical confidence interval.</p>
+    <p><strong>Time of day.</strong> Departures during the morning (06:00–09:59) and evening (17:00–21:59) peaks get 8 points, midday hours get 3, and late night gets none.</p>
+    <p><strong>Good to know.</strong> The main score is a rule-based estimate built for learning. Weather and wind can be filled from a live forecast; airport traffic is an estimate and the inbound delay is entered by you. It does not use live airline feeds.</p>
+  </section>
+  <section class="card prose" aria-labelledby="w3">
+    <div class="card-head"><h2 id="w3">Trained model</h2></div>
+    <div id="trainedBody"><p>Loading…</p></div>
+  </section>
+</div>
+
+</main>
+<noscript><p style="padding:16px">FlightPredict needs JavaScript for navigation and charts.</p></noscript>
+<script src="shell.js"></script>
+<script src="model-info.js"></script>
+
+</body>
+</html>
