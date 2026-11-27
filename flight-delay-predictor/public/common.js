@@ -89,18 +89,48 @@
   }
 
   // Markup for one prediction result. gaugeId must be unique on the page.
-  function resultHTML(r, gaugeId) {
+  function resultHTML(r, gaugeId, opts) {
+    opts = opts || {};
     const label = { low: "Low risk", medium: "Medium risk", high: "High risk" }[r.riskClass];
-    return '<div class="result-top">' + Charts.gaugeSVG(gaugeId) +
+    const seasonBadge = (r.season && r.season.length)
+      ? '<span class="season-badge">' + esc(r.season.map((s) => ({ monsoon: "Monsoon", "winter-fog": "Winter fog", festival: "Festival peak" }[s] || s)).join(" · ")) + "</span>"
+      : "";
+    const sugg = (r.suggestions || []).map((s, i) =>
+      '<button type="button" class="sugg-chip" data-sugg="' + i + '" data-action="' + esc(s.action || "") + '" data-value="' + esc(s.value || "") + '">' + esc(s.text) + "</button>"
+    ).join("");
+    const strip = sugg
+      ? '<div class="suggestion-strip" role="region" aria-label="Suggestions"><div class="sugg-label">Suggestions</div><div class="sugg-row">' + sugg + "</div></div>"
+      : "";
+    const whatIf = opts.whatIf !== false
+      ? '<div class="what-if card-inset" id="whatIfPanel">' +
+        '<h3 class="section-title" style="margin-top:0">What if…</h3>' +
+        '<p class="hint" style="margin:0 0 10px">Drag to see how the score changes. Press Predict again to lock a new result.</p>' +
+        '<div class="what-if-grid">' +
+        '<label class="wi-field">Weather<select id="wiWeather"><option value="clear">Clear</option><option value="cloudy">Cloudy</option><option value="rain">Rain</option><option value="fog">Fog</option><option value="storm">Storm</option></select></label>' +
+        '<label class="wi-field">Wind (km/h)<input id="wiWind" type="range" min="0" max="80" step="5"><span id="wiWindVal" class="wi-val"></span></label>' +
+        '<label class="wi-field">Traffic<select id="wiTraffic"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label>' +
+        '<label class="wi-field">Inbound delay<select id="wiPrev"><option value="0">On time</option><option value="1">15–45 min</option><option value="2">45+ min</option></select></label>' +
+        '</div><div class="wi-result" id="wiResult" aria-live="polite"></div></div>'
+      : "";
+    const actions =
+      '<div class="btn-row result-actions">' +
+      '<button type="button" class="btn btn-ghost" id="shareBtn">Share</button>' +
+      '<button type="button" class="btn btn-ghost" id="watchBtn">☆ Watchlist</button>' +
+      '<button type="button" class="btn btn-ghost" id="feedbackYes">Was accurate</button>' +
+      '<button type="button" class="btn btn-ghost" id="feedbackNo">Was off</button>' +
+      "</div>";
+    return strip +
+      '<div class="result-top">' + Charts.gaugeSVG(gaugeId) +
       '<div class="delay-big">' + r.delay + "<small>min expected delay</small></div>" +
-      '<div style="margin-top:10px"><span class="risk-badge ' + r.riskClass + '">' + label + "</span></div>" +
-      '<div class="result-meta"><span>Score stability <strong>' + r.confidence + '%</strong></span></div></div>' +
+      '<div style="margin-top:10px"><span class="risk-badge ' + r.riskClass + '">' + label + "</span> " + seasonBadge + "</div>" +
+      '<div class="result-meta"><span>Score stability <strong>' + r.confidence + '%</strong></span><span>Delay chance <strong>' + r.probability + '%</strong></span></div></div>' +
       (r.trained ? '<p style="margin:12px 0 0;font-size:.9em;opacity:.9">Trained model: <strong>' + r.trained.probability + '%</strong> delay chance, about ' + r.trained.delay + ' min (' + r.trained.accuracy + '% accuracy on ' + r.trained.testRows + ' test flights' + (r.trained.synthetic ? ', synthetic demo data' : '') + ').</p>' : '') +
       '<h3 class="section-title">Why this score</h3>' +
       r.factors.map((f) =>
         '<div class="factor"><div class="factor-head"><span>' + esc(f.label) + "</span><strong>" + f.points + " / " + f.max + ' pts</strong></div><div class="bar" role="img" aria-label="' + esc(f.label) + " adds " + f.points + " of " + f.max + ' points"><span style="width:' + (f.max ? (f.points / f.max) * 100 : 0) + '%"></span></div></div>'
       ).join("") +
-      '<h3 class="section-title">What to do</h3><ul class="tips">' + r.tips.map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul>";
+      '<h3 class="section-title">What to do</h3><ul class="tips">' + r.tips.map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul>" +
+      whatIf + actions;
   }
   function animateGauge(gaugeId, r) {
     const svg = document.getElementById(gaugeId);
@@ -114,5 +144,29 @@
     });
   }
 
-  window.FPForm = { FIELDS, render, read, fill, bindAlert, resultHTML, animateGauge, predict };
+  // Client-side score for What-if (mirrors server rule-based model).
+  function clientScore(input) {
+    const W = { clear: 0, cloudy: 8, rain: 20, fog: 28, storm: 35 };
+    const T = { low: 3, medium: 12, high: 25 };
+    const P = [0, 10, 20];
+    function wind(kmh) { if (kmh < 20) return 0; if (kmh < 30) return 5; if (kmh <= 50) return 10; return 18; }
+    function timeImpact(time) {
+      const m = /^(\d{1,2}):(\d{2})$/.exec(String(time || ""));
+      if (!m) return 0;
+      const h = Number(m[1]);
+      if ((h >= 6 && h <= 9) || (h >= 17 && h <= 21)) return 8;
+      if (h >= 10 && h <= 16) return 3;
+      return 0;
+    }
+    const dest = input.destWeather ? Math.round(((W[input.destWeather] || 0) * 10) / 35) : 0;
+    const score = (W[input.weather] || 0) + (T[input.traffic] || 0) + wind(Number(input.wind) || 0) + (P[input.previousDelay] || 0) + timeImpact(input.time) + dest;
+    const probability = Math.min(98, Math.max(2, Math.round(score)));
+    const delay = probability < 20 ? Math.round(probability * 0.3) : Math.round(probability * 0.9 + (input.previousDelay || 0) * 8);
+    let riskClass = "low";
+    if (probability >= 65) riskClass = "high";
+    else if (probability >= 35) riskClass = "medium";
+    return { probability, delay, riskClass };
+  }
+
+  window.FPForm = { FIELDS, render, read, fill, bindAlert, resultHTML, animateGauge, predict, clientScore };
 })();

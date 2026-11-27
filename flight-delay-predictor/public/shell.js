@@ -8,6 +8,7 @@
       { key: "predict", href: "predict.html", label: "Predict a flight", icon: "M3 11 21 3l-6 18-3-7z" },
       { key: "compare", href: "compare.html", label: "Compare flights", icon: "M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4" },
       { key: "best-time", href: "best-time.html", label: "Best time to fly", icon: "M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z" },
+      { key: "connection", href: "connection.html", label: "Connection risk", icon: "M8 7h8M8 17h8M7 12h10M12 7v10" },
     ]},
     { title: "Learn", items: [
       { key: "weather", href: "weather.html", label: "Weather impact", icon: "M7 18a4 4 0 1 1 .9-7.9A5.5 5.5 0 0 1 18.5 11 3.5 3.5 0 0 1 18 18z" },
@@ -93,7 +94,9 @@
       '<button class="icon-btn" id="fontUp" type="button" aria-label="Increase text size">A+</button></div>' +
       '<button class="icon-btn" id="contrastBtn" type="button" aria-pressed="false" aria-label="High contrast">' +
       '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>' +
-      '<button class="icon-btn" id="themeBtn" type="button" aria-label="Switch theme"></button></div>';
+      '<button class="icon-btn" id="themeBtn" type="button" aria-label="Switch theme"></button>' +
+      '<button class="icon-btn" id="installBtn" type="button" aria-label="Add to Home Screen" title="Add to Home Screen" hidden>' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4M5 21h14"/></svg></button></div>';
 
     const foot = document.createElement("footer");
     foot.className = "site-foot";
@@ -108,6 +111,53 @@
     wireControls();
     wireMenu(scrim);
     checkHealth();
+    wireInstall();
+    registerSW();
+  }
+
+  let deferredPrompt = null;
+  function wireInstall() {
+    const btn = document.getElementById("installBtn");
+    if (!btn) return;
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      btn.hidden = false;
+    });
+    window.addEventListener("appinstalled", () => {
+      deferredPrompt = null;
+      btn.hidden = true;
+      toast("Added to Home Screen");
+    });
+    btn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        btn.hidden = true;
+        if (choice && choice.outcome === "accepted") toast("Added to Home Screen");
+      } else {
+        // iOS / browsers without beforeinstallprompt
+        const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        if (isIos) {
+          toast("On iPhone: tap Share, then Add to Home Screen");
+        } else {
+          toast("Use your browser menu → Install app / Add to Home Screen");
+        }
+      }
+    });
+    // Show the button on capable browsers even before the event (user can still follow instructions)
+    if (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone) {
+      btn.hidden = true;
+    } else {
+      // Keep visible as a hint on mobile
+      if (/android|iphone|ipad|mobile/i.test(navigator.userAgent)) btn.hidden = false;
+    }
+  }
+
+  function registerSW() {
+    if (!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("./sw.js").catch(() => { /* offline or unsupported */ });
   }
 
   function wireControls() {

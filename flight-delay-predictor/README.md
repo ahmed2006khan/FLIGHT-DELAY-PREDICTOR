@@ -5,7 +5,14 @@ A full-stack flight delay predictor.
 
 ## Features
 - **Dashboard**: key numbers, delay trend, risk mix, delays by hour / airline / airport, delay causes, recent predictions
-- **Predict a flight**: delay chance, expected minutes, confidence, "why this score" breakdown, tips, saved routes
+- **Predict a flight**: delay chance, expected minutes, score stability, factor breakdown, tips, saved routes
+- **Suggestion strip**: contextual next actions (better departure times, watchlist, weather tips)
+- **What-if simulator**: live sliders to see how weather / wind / traffic / inbound delay change the score
+- **Share and watchlist**: share a prediction, save flights to a browser watchlist, mark feedback
+- **Connection risk**: estimate chance of missing an onward flight given delay + connection window
+- **Fill everything**: one-tap location + live forecast fill
+- **Seasonality**: monsoon / winter fog / festival-peak tips for India-centric routes
+- **PWA / Add to Home Screen**: installable app with offline shell (manifest + service worker)
 - **Compare flights**: two flights side by side (not saved to history)
 - **Best time to fly**: delay chance for each departure hour
 - **History**: search, filter by risk and weather, CSV export

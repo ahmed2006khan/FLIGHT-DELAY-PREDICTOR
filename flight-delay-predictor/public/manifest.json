@@ -1,0 +1,26 @@
+{
+  "name": "FlightPredict",
+  "short_name": "FlightPredict",
+  "description": "Know before you go. Estimate flight delay risk from weather, traffic, wind and inbound delays.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#060d1f",
+  "theme_color": "#0a1330",
+  "categories": ["travel", "utilities"],
+  "icons": [
+    {
+      "src": "logo-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

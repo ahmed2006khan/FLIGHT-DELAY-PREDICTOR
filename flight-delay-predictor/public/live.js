@@ -14,7 +14,8 @@
   panel.innerHTML =
     '<div class="btn-row" style="margin:0 0 8px">' +
     '<button type="button" class="btn btn-ghost" id="useLoc">📍 Use my location</button>' +
-    '<button type="button" class="btn btn-ghost" id="liveFill">☁ Fill from live forecast</button></div>' +
+    '<button type="button" class="btn btn-ghost" id="liveFill">☁ Fill from live forecast</button>' +
+    '<button type="button" class="btn btn-primary" id="fillAll">⚡ Fill everything possible</button></div>' +
     '<div id="liveStatus" class="hint" aria-live="polite">Pick your airport from your location, then fill weather, wind and traffic from the forecast. You can still change any value.</div>';
   form.insertBefore(panel, $("fields"));
   const status = (html) => { $("liveStatus").innerHTML = html; };
@@ -62,6 +63,34 @@
     } catch (err) {
       status("Could not load the forecast: " + esc(err.message) + " You can still enter the conditions by hand.");
     } finally { btn.disabled = false; }
+  });
+
+  // One-tap: location (if available) then live forecast.
+  $("fillAll").addEventListener("click", async () => {
+    const doFill = () => $("liveFill").click();
+    if (!$("origin").value && navigator.geolocation) {
+      status("Finding your location, then loading the forecast…");
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const me = [pos.coords.latitude, pos.coords.longitude];
+        let best = null;
+        window.AIRPORTS.forEach((a) => { const d = km(me, [a[2], a[3]]); if (!best || d < best.d) best = { a, d }; });
+        if (best && best.d <= 300) {
+          const o = $("origin"); o.value = best.a[0]; o.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        if (!$("date").value) $("date").value = new Date().toISOString().slice(0, 10);
+        if (!$("time").value) {
+          const now = new Date();
+          $("time").value = String(now.getHours()).padStart(2, "0") + ":" + String(Math.floor(now.getMinutes() / 5) * 5).padStart(2, "0");
+        }
+        doFill();
+      }, () => {
+        if (!$("date").value) $("date").value = new Date().toISOString().slice(0, 10);
+        doFill();
+      }, { timeout: 8000, maximumAge: 600000 });
+    } else {
+      if (!$("date").value) $("date").value = new Date().toISOString().slice(0, 10);
+      doFill();
+    }
   });
 
   // A changed destination means the stored destination weather no longer applies.

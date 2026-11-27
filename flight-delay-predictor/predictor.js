@@ -63,8 +63,25 @@ function confidence(probability) {
   return Math.min(98, Math.round(60 + distance * 2.5));
 }
 
+function monthOf(dateStr) {
+  const m = /^(\d{4})-(\d{2})/.exec(String(dateStr || ""));
+  return m ? Number(m[2]) : null;
+}
+
+// Simple seasonality flags for India-centric routes (monsoon, winter fog, festival peaks).
+function seasonFlags(dateStr) {
+  const m = monthOf(dateStr);
+  if (!m) return [];
+  const flags = [];
+  if (m >= 6 && m <= 9) flags.push("monsoon");
+  if (m === 12 || m === 1 || m === 2) flags.push("winter-fog");
+  if (m === 10 || m === 11) flags.push("festival");
+  return flags;
+}
+
 function tips(input, f) {
   const out = [];
+  const season = seasonFlags(input.date);
   if (f.weather >= 28) out.push("Severe weather expected: check your airline's app before leaving for the airport.");
   else if (f.weather >= 20) out.push("Rain can slow ground operations. Allow extra time for the journey.");
   if (f.wind >= 10) out.push("Strong winds can affect take-off and landing slots.");
@@ -72,8 +89,53 @@ function tips(input, f) {
   if (f.previous >= 10) out.push("The aircraft is arriving late from its previous flight, so a late departure is likely.");
   if (f.destination >= 6) out.push("Poor weather at your destination can delay arrival slots or cause holding. Check the destination forecast too.");
   if (f.time >= 8) out.push("This is a peak departure hour. An off-peak slot may be calmer.");
+  if (season.includes("monsoon") && f.weather >= 8) out.push("Monsoon season: expect sudden showers and slower ground handling even when the sky looks only cloudy.");
+  if (season.includes("winter-fog") && (input.weather === "fog" || input.weather === "cloudy")) out.push("Winter fog season in northern India often causes long ATC holds. Keep plans flexible.");
+  if (season.includes("festival")) out.push("Festival travel peak: airports and security lines are busier than usual — arrive earlier.");
   if (!out.length) out.push("Conditions look good. Arrive at the usual time and keep an eye on flight updates.");
   return out;
+}
+
+// Short contextual suggestions shown in the suggestion strip.
+// Uses a lightweight score (no recursion into full predict/bestTimes).
+function suggestions(input, result) {
+  const items = [];
+  const f = factors(input);
+  const hour = parseHour(input.time);
+  if (result.probability >= 50 && hour !== null) {
+    // Evaluate nearby hours with the same conditions (inline, no full bestTimes).
+    const nearby = [];
+    for (let h = Math.max(0, hour - 3); h <= Math.min(23, hour + 3); h++) {
+      if (h === hour) continue;
+      const t = String(h).padStart(2, "0") + ":00";
+      const ff = factors({ ...input, time: t });
+      const sc = ff.weather + ff.traffic + ff.wind + ff.previous + ff.time + ff.destination;
+      const p = Math.min(98, Math.max(2, Math.round(sc)));
+      if (p < result.probability - 8) nearby.push({ time: t, probability: p });
+    }
+    nearby.sort((a, b) => a.probability - b.probability).slice(0, 2).forEach((h) => {
+      items.push({
+        type: "alt-time",
+        text: "Try " + h.time + " instead — about " + h.probability + "% delay chance",
+        action: "set-time",
+        value: h.time,
+      });
+    });
+  }
+  if (f.previous >= 10) {
+    items.push({ type: "tip", text: "Inbound aircraft is late — consider a later connection or buffer", action: null });
+  }
+  if (result.probability >= 65) {
+    items.push({ type: "watch", text: "High risk — add to watchlist and re-check closer to departure", action: "watchlist" });
+  } else if (result.probability >= 35) {
+    items.push({ type: "tip", text: "Medium risk — keep the airline app open for gate changes", action: null });
+  } else {
+    items.push({ type: "tip", text: "Looking good — still allow normal airport buffer time", action: null });
+  }
+  if (f.weather >= 20 || f.wind >= 10) {
+    items.push({ type: "tip", text: "Weather-driven risk — re-run the prediction a few hours before departure", action: null });
+  }
+  return items.slice(0, 4);
 }
 
 function predict(input) {
@@ -86,7 +148,7 @@ function predict(input) {
     : Math.round(probability * 0.9 + input.previousDelay * 8);
 
   const { risk, riskClass } = classify(probability);
-  return {
+  const result = {
     delay,
     probability,
     risk,
@@ -100,6 +162,9 @@ function predict(input) {
     })),
     tips: tips(input, f),
   };
+  result.suggestions = suggestions(input, result);
+  result.season = seasonFlags(input.date);
+  return result;
 }
 
 // Risk for every departure hour with the same conditions, plus the best slots.
@@ -145,5 +210,5 @@ function validateConditions(b) {
 
 module.exports = {
   predict, validate, validateConditions, windImpact, timeImpact, factors, bestTimes,
-  classify, confidence, FACTOR_LABELS, FACTOR_MAX, WEATHER, TRAFFIC,
+  classify, confidence, suggestions, seasonFlags, FACTOR_LABELS, FACTOR_MAX, WEATHER, TRAFFIC,
 };

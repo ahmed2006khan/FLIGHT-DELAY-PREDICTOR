@@ -428,3 +428,48 @@ tbody tr:hover { background: var(--surface-2); }
   .card { box-shadow: none; backdrop-filter: none; background: #fff; break-inside: avoid; }
   .page { padding: 0; }
 }
+
+/* ---------- suggestion strip ---------- */
+.suggestion-strip {
+  margin: 0 0 18px; padding: 12px 14px; border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+}
+.sugg-label { font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); margin-bottom: 8px; }
+.sugg-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.sugg-chip {
+  appearance: none; border: 1px solid var(--border-strong); background: var(--surface-solid);
+  color: var(--text); border-radius: 999px; padding: 7px 12px; font-size: .86rem; cursor: pointer;
+  font-family: inherit; line-height: 1.3; text-align: left;
+}
+.sugg-chip:hover { border-color: var(--accent); background: var(--surface); }
+.season-badge {
+  display: inline-block; margin-left: 6px; padding: 3px 9px; border-radius: 999px;
+  font-size: .75rem; font-weight: 600; background: var(--med-bg); color: var(--med);
+  border: 1px solid color-mix(in srgb, var(--med) 40%, transparent);
+}
+
+/* ---------- what-if panel ---------- */
+.card-inset {
+  margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-sm);
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.what-if-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.wi-field { display: grid; gap: 4px; font-size: .86rem; color: var(--text-2); }
+.wi-field select, .wi-field input[type="range"] { width: 100%; }
+.wi-val { font-size: .82rem; color: var(--text-3); }
+.wi-result { margin-top: 12px; font-size: .95rem; }
+.result-actions { margin-top: 16px; }
+@media (max-width: 560px) {
+  .what-if-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- install / PWA ---------- */
+#installBtn:not([hidden]) { display: inline-grid; }
+.install-banner {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin: 0 0 16px; padding: 12px 16px; border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+.install-banner p { margin: 0; flex: 1 1 200px; font-size: .92rem; color: var(--text-2); }

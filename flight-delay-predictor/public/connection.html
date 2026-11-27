@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="FlightPredict connection risk: will you make your onward flight?">
+<meta name="theme-color" content="#0a1330">
+<link rel="manifest" href="manifest.json">
+<title>Connection risk · FlightPredict</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="theme-init.js"></script>
+</head>
+<body data-page="connection">
+<main id="main" class="page">
+<div class="page-head">
+  <h1>Connection risk</h1>
+  <p>Estimate the chance of missing your onward flight given a predicted arrival delay and the connection window.</p>
+</div>
+
+<section class="card" aria-labelledby="ch">
+  <div class="card-head"><div><h2 id="ch">Your connection</h2><p>All times in local airport time.</p></div></div>
+  <form id="connForm" class="form-grid">
+    <div class="field"><label for="arriveDelay">Expected arrival delay (min)</label>
+      <input id="arriveDelay" type="number" min="0" max="300" value="25" required></div>
+    <div class="field"><label for="scheduledArrive">Scheduled arrival time</label>
+      <input id="scheduledArrive" type="time" value="14:30" required></div>
+    <div class="field"><label for="departTime">Onward departure time</label>
+      <input id="departTime" type="time" value="15:40" required></div>
+    <div class="field"><label for="minConnect">Minimum connection time (min)</label>
+      <input id="minConnect" type="number" min="20" max="180" value="45" required>
+      <span class="hint">Typical domestic MCT is 45 min; international often 60–90.</span></div>
+    <div class="field"><label for="sameTerminal">Same terminal / bag recheck?</label>
+      <select id="sameTerminal">
+        <option value="same">Same terminal, no bag recheck</option>
+        <option value="transfer">Terminal change or bag recheck</option>
+        <option value="international">International connection</option>
+      </select></div>
+  </form>
+  <div class="btn-row">
+    <button type="button" class="btn btn-primary" id="calcBtn">Calculate risk</button>
+  </div>
+  <div id="connResult" class="card-inset" style="margin-top:18px" hidden aria-live="polite"></div>
+</section>
+
+<section class="card" style="margin-top:20px">
+  <div class="card-head"><div><h2>How it works</h2></div></div>
+  <p style="margin:0;color:var(--text-2);font-size:.95rem">
+    We add your expected arrival delay to the scheduled arrival, then compare the remaining buffer to the minimum connection time
+    (adjusted for terminal changes). If the buffer is tight, risk rises quickly — airlines usually will not hold the second flight.
+  </p>
+</section>
+</main>
+<script src="shell.js"></script>
+<script>
+(function () {
+  function parseTime(t) {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(t || "");
+    if (!m) return null;
+    return Number(m[1]) * 60 + Number(m[2]);
+  }
+  function fmt(mins) {
+    const h = Math.floor(((mins % 1440) + 1440) % 1440 / 60);
+    const m = ((mins % 60) + 60) % 60;
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+  }
+  document.getElementById("calcBtn").addEventListener("click", () => {
+    const delay = Number(document.getElementById("arriveDelay").value) || 0;
+    const arr = parseTime(document.getElementById("scheduledArrive").value);
+    const dep = parseTime(document.getElementById("departTime").value);
+    let mct = Number(document.getElementById("minConnect").value) || 45;
+    const term = document.getElementById("sameTerminal").value;
+    if (term === "transfer") mct += 20;
+    if (term === "international") mct += 30;
+    const out = document.getElementById("connResult");
+    if (arr === null || dep === null) {
+      out.hidden = false;
+      out.innerHTML = "<p>Enter valid times.</p>";
+      return;
+    }
+    let window = dep - arr;
+    if (window < 0) window += 24 * 60; // next day
+    const effectiveArrive = arr + delay;
+    let buffer = dep - effectiveArrive;
+    if (buffer < -12 * 60) buffer += 24 * 60;
+    const spare = buffer - mct;
+    let riskClass = "low", label = "Low risk", msg = "You should make the connection with a comfortable buffer.";
+    if (spare < 0) {
+      riskClass = "high"; label = "High risk";
+      msg = "Expected arrival leaves less than the minimum connection time. High chance of missing the onward flight.";
+    } else if (spare < 15) {
+      riskClass = "high"; label = "High risk";
+      msg = "Very tight. Any further delay or long taxi will likely cause a miss.";
+    } else if (spare < 30) {
+      riskClass = "medium"; label = "Medium risk";
+      msg = "Tight connection. Move quickly and ask the airline about protection if the first leg is delayed.";
+    }
+    out.hidden = false;
+    out.innerHTML =
+      '<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px">' +
+      '<span class="risk-badge ' + riskClass + '">' + label + "</span>" +
+      "<strong>Buffer after delay: " + buffer + " min</strong>" +
+      "<span style=\"color:var(--text-3)\">Needed MCT: " + mct + " min · Spare: " + spare + " min</span></div>" +
+      "<p style=\"margin:0;color:var(--text-2)\">" + msg + "</p>" +
+      "<p class=\"hint\" style=\"margin:10px 0 0\">Scheduled window " + window + " min · Effective arrival ~" + fmt(effectiveArrive) + "</p>";
+  });
+})();
+</script>
+</body>
+</html>
